@@ -1,0 +1,5 @@
+{
+  "name": "InfluencerOS Canvas",
+  "description": "A node-based canvas for generating influencer images and social media posts using Gemini.",
+  "requestFramePermissions": []
+}
