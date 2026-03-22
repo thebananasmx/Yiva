@@ -1,8 +1,20 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let aiInstance: GoogleGenAI | null = null;
+
+function getAI() {
+  if (!aiInstance) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey || apiKey === "undefined") {
+      throw new Error("GEMINI_API_KEY is missing. Please set it in your environment variables.");
+    }
+    aiInstance = new GoogleGenAI({ apiKey });
+  }
+  return aiInstance;
+}
 
 export async function generateImage(identity: string, scenario: string): Promise<string> {
+  const ai = getAI();
   const prompt = `A highly detailed, professional photo of a person. Identity/Appearance: ${identity}. Scenario/Context: ${scenario}.`;
   
   const response = await ai.models.generateContent({
@@ -33,6 +45,7 @@ export async function generateImage(identity: string, scenario: string): Promise
 }
 
 export async function generateCaption(identity: string, scenario: string, imageBase64: string): Promise<string> {
+  const ai = getAI();
   const prompt = `Write an engaging Instagram caption for a photo of this person. Identity: ${identity}. Scenario: ${scenario}. Keep it natural, add relevant emojis, and include 3-5 hashtags.`;
   
   // Extract base64 data without the prefix
